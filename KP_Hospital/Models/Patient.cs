@@ -10,10 +10,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace KP_Hospital.Models
-{
-       
-        public class Patient
-        {
+{     /// <summary>
+     /// Сущность "Пациент". Содержит персональные данные пациента.
+     /// </summary>
+
+    public class Patient
+    {
             public int PatientId { get; set; }
 
             public string FullName { get; set; } = string.Empty;
@@ -31,7 +33,7 @@ namespace KP_Hospital.Models
 
    
             public List<MedicalRecord> MedicalRecords { get; set; } = new();
-        }
+    }
     
 
 

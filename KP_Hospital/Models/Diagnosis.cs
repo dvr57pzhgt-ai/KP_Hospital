@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace KP_Hospital.Models
 {
-   
-        public class Diagnosis
+    // <summary>
+    /// Сущность "Диагноз". Представляет собой справочник медицинских диагнозов.
+    /// </summary>
+
+    public class Diagnosis
         {
             public int DiagnosisId { get; set; }
 

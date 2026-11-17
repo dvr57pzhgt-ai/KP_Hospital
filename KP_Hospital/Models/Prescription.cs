@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace KP_Hospital.Models
 {
-  
-        public class Prescription
-        {
+    /// <summary>
+    /// Сущность "Назначение" (Рецепт). Содержит информацию о выписанных врачом лекарствах.
+    /// </summary>
+
+    public class Prescription
+    {
             public int PrescriptionId { get; set; }
 
             public string Medication { get; set; } = string.Empty;
@@ -19,6 +22,6 @@ namespace KP_Hospital.Models
 
             public int RecordId { get; set; }
             public MedicalRecord? MedicalRecord { get; set; }
-        }
+    }
     
 }

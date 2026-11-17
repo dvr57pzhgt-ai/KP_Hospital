@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KP_Hospital.Data;
+﻿using KP_Hospital.Data;
 
 namespace KP_Hospital.Services
 {
+    /// <summary>
+    /// Сервис для авторизации врачей в системе.
+    /// </summary>
+    public class AuthService : IAuthService
+    {
+        private readonly AppDbContext _context;
 
-        public class AuthService : IAuthService
+        public AuthService(AppDbContext context)
         {
-            private readonly AppDbContext _context;
-
-            public AuthService(AppDbContext context)
-            {
-                _context = context;
-            }
-
-            public bool Login(string username, string password)
-            {
-                return _context.Doctors.Any(d => d.Login == username && d.PasswordHash == password);
-            }
+            _context = context;
         }
-    
+        /// <summary>
+        /// Проверяет наличие врача с указанным логином и паролем.
+        /// </summary>
 
+        public bool Login(string username, string password)
+        {
+            return _context.Doctors.Any(d => d.Login == username && d.PasswordHash == password);
+        }
+    }
 }

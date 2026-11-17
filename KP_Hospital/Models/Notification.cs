@@ -7,9 +7,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KP_Hospital.Models
 {
-    
-        public class Notification
-        {
+    /// <summary>
+    /// Сущность "Уведомление". Используется для оповещения врачей о событиях в системе.
+    /// </summary>
+    public class Notification
+    {
             public int NotificationId { get; set; }
 
             public string Type { get; set; } = string.Empty;
@@ -22,6 +24,6 @@ namespace KP_Hospital.Models
 
             public int DoctorId { get; set; }
             public Doctor? Doctor { get; set; }
-        }
+    }
     
 }

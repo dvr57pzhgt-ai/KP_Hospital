@@ -1,0 +1,41 @@
+﻿<Window x:Class="KP_Hospital.Views.PatientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Добавление пациента" Height="550" Width="450" 
+        WindowStartupLocation="CenterOwner" Background="#F0F4F8">
+
+    <Grid Margin="20">
+        <Border Background="White" CornerRadius="10" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#B0BEC5" BlurRadius="15" ShadowDepth="3" Opacity="0.4"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock Text="Новый пациент" FontSize="22" FontWeight="Bold" 
+                           Foreground="#1976D2" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                <TextBlock Text="ФИО пациента:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtFullName" Height="30" Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Дата рождения:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <DatePicker x:Name="dpBirthDate" Height="30" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Пол (М/Ж):" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtGender" Height="30" Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Номер полиса:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtInsurance" Height="30" Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Адрес:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtAddress" Height="30" Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Телефон:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtPhone" Height="30" Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,20"/>
+
+                <Button Content="Сохранить" Click="BtnSave_Click" Height="40" FontSize="16" 
+                        Background="#1976D2" Foreground="White" BorderThickness="0">
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

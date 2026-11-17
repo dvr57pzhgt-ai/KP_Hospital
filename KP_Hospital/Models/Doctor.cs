@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
 namespace KP_Hospital.Models
-{
+{      /// <summary>
+         /// Сущность "Врач". Содержит данные о медицинском сотруднике для авторизации и работы.
+         /// </summary>
 
-        public class Doctor
-        {
+    public class Doctor
+    {
             public int DoctorId { get; set; }
 
           
@@ -27,7 +29,7 @@ namespace KP_Hospital.Models
 
             public List<MedicalRecord> MedicalRecords { get; set; } = new();
             public List<Notification> Notifications { get; set; } = new();
-       }
+     }
     
 
 }

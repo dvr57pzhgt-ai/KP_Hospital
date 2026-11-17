@@ -8,8 +8,11 @@ using KP_Hospital.Models;
 
 namespace KP_Hospital.Services
 {
+    /// <summary>
+    /// Сервис для управления пациентами (поиск, добавление).
+    /// </summary>
 
-        public class PatientService : IPatientService
+    public class PatientService : IPatientService
         {
             private readonly AppDbContext _context;
 
@@ -17,8 +20,11 @@ namespace KP_Hospital.Services
             {
                 _context = context;
             }
+        /// <summary>
+        /// Ищет пациентов по ФИО.
+        /// </summary>
 
-            public List<Patient> FindPatients(string name)
+        public List<Patient> FindPatients(string name)
             {
                 if (string.IsNullOrWhiteSpace(name))
                     return _context.Patients.ToList();
@@ -26,7 +32,10 @@ namespace KP_Hospital.Services
                 return _context.Patients.Where(p => p.FullName.Contains(name)).ToList();
             }
 
-            public void AddPatient(Patient patient)
+        /// <summary>
+        /// Добавляет нового пациента в базу данных.
+        /// </summary>
+        public void AddPatient(Patient patient)
             {
                 _context.Patients.Add(patient);
                 _context.SaveChanges();

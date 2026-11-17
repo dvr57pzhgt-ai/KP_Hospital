@@ -7,6 +7,10 @@ using KP_Hospital.Models;
 
 namespace KP_Hospital.Services
 {
+    /// <summary>
+    /// Интерфейс для сервиса управления пациентами.
+    /// Определяет контракт для поиска и добавления пациентов.
+    /// </summary>
 
     public interface IPatientService
     {

@@ -8,8 +8,11 @@ using KP_Hospital.Models;
 
 namespace KP_Hospital.Services
 {
-    
-        public class MedicalRecordService : IMedicalRecordService
+    /// <summary>
+    /// Сервис для работы с историями болезней.
+    /// </summary>
+
+    public class MedicalRecordService : IMedicalRecordService
         {
             private readonly AppDbContext _context;
 
@@ -17,15 +20,21 @@ namespace KP_Hospital.Services
             {
                 _context = context;
             }
+        /// <summary>
+        /// Получает все истории болезней конкретного пациента.
+        /// </summary>
 
-            public List<MedicalRecord> GetRecordsByPatientId(int patientId)
+        public List<MedicalRecord> GetRecordsByPatientId(int patientId)
             {
                 return _context.MedicalRecords
                                .Where(r => r.PatientId == patientId)
                                .ToList();
             }
+        /// <summary>
+        /// Сохраняет новую историю болезни.
+        /// </summary>
 
-            public void SaveRecord(MedicalRecord record)
+        public void SaveRecord(MedicalRecord record)
             {
                 if (record.DiagnosisId == null || record.DiagnosisId == 0)
                     throw new ArgumentException("Не выбран диагноз!");
