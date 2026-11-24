@@ -44,5 +44,6 @@ namespace KP_Hospital.Models
             ObjectiveStatus = memento.ObjectiveStatus;
             TreatmentPlan = memento.TreatmentPlan;
         }
+      
     }
 }

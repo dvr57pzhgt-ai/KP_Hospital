@@ -1,0 +1,45 @@
+﻿<Window x:Class="KP_Hospital.Views.MedicalRecordWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KP_Hospital.Views"
+        mc:Ignorable="d"
+        Title="История болезни" Height="600" Width="600" 
+        WindowStartupLocation="CenterOwner" Background="#F0F4F8">
+
+    <Grid Margin="20">
+        <Border Background="White" CornerRadius="10" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect Color="#B0BEC5" BlurRadius="15" ShadowDepth="3" Opacity="0.4"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock x:Name="txtPatientName" Text="Пациент: " FontSize="18" FontWeight="Bold" 
+                           Foreground="#1976D2" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Диагноз:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <ComboBox x:Name="cmbDiagnosis" Height="30" Margin="0,0,0,15" DisplayMemberPath="Name" />
+
+                <TextBlock Text="Жалобы:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtComplaints" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
+                         Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15" TextChanged="Input_TextChanged"/>
+
+                <TextBlock Text="Объективный статус:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtObjective" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
+                         Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,15" TextChanged="Input_TextChanged"/>
+
+                <TextBlock Text="План лечения:" Foreground="#546E7A" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtTreatment" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
+                         Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,20" TextChanged="Input_TextChanged"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Отменить" Click="BtnUndo_Click" Width="100" Height="35" Margin="0,0,10,0" 
+                            Background="#FF9800" Foreground="White" BorderThickness="0"/>
+                    <Button Content="Сохранить" Click="BtnSave_Click" Width="120" Height="35" 
+                            Background="#1976D2" Foreground="White" BorderThickness="0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

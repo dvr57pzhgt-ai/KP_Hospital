@@ -13,35 +13,34 @@ namespace KP_Hospital.Services
     /// </summary>
 
     public class MedicalRecordService : IMedicalRecordService
-        {
-            private readonly AppDbContext _context;
+    {
+        private readonly AppDbContext _context;
 
-            public MedicalRecordService(AppDbContext context)
-            {
-                _context = context;
-            }
+        public MedicalRecordService(AppDbContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// Получает все истории болезней конкретного пациента.
         /// </summary>
 
         public List<MedicalRecord> GetRecordsByPatientId(int patientId)
-            {
-                return _context.MedicalRecords
-                               .Where(r => r.PatientId == patientId)
-                               .ToList();
-            }
+        {
+            return _context.MedicalRecords
+                           .Where(r => r.PatientId == patientId)
+                           .ToList();
+        }
         /// <summary>
         /// Сохраняет новую историю болезни.
         /// </summary>
-
         public void SaveRecord(MedicalRecord record)
-            {
-                if (record.DiagnosisId == null || record.DiagnosisId == 0)
-                    throw new ArgumentException("Не выбран диагноз!");
+        {
+            if (record.DiagnosisId == null || record.DiagnosisId == 0)
+                throw new ArgumentException("Не выбран диагноз!");
 
-                _context.MedicalRecords.Add(record);
-                _context.SaveChanges();
-            }
+            _context.MedicalRecords.Add(record);
+            _context.SaveChanges();
+
         }
-    
+    }
 }

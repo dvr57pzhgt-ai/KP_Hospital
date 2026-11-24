@@ -13,34 +13,35 @@ namespace KP_Hospital.Services
     /// </summary>
 
     public class PatientService : IPatientService
-        {
-            private readonly AppDbContext _context;
+    {
+        private readonly AppDbContext _context;
 
-            public PatientService(AppDbContext context)
-            {
-                _context = context;
-            }
+        public PatientService(AppDbContext context)
+        {
+            _context = context;
+        }
         /// <summary>
         /// Ищет пациентов по ФИО.
         /// </summary>
 
         public List<Patient> FindPatients(string name)
-            {
-                if (string.IsNullOrWhiteSpace(name))
-                    return _context.Patients.ToList();
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return _context.Patients.ToList();
 
-                return _context.Patients.Where(p => p.FullName.Contains(name)).ToList();
-            }
+            return _context.Patients.Where(p => p.FullName.Contains(name)).ToList();
+        }
 
         /// <summary>
         /// Добавляет нового пациента в базу данных.
         /// </summary>
         public void AddPatient(Patient patient)
-            {
-                _context.Patients.Add(patient);
-                _context.SaveChanges();
-            }
+        {
+            _context.Patients.Add(patient);
+            _context.SaveChanges();
         }
+
+    }
     
 
 }

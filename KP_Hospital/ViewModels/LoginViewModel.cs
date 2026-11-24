@@ -11,7 +11,6 @@ namespace KP_Hospital.ViewModels
     /// </summary>
     public partial class LoginViewModel : ObservableObject
     {
-        // Свойства (вручную, чтобы избежать ошибок генератора)
         private string _username = string.Empty;
         public string Username
         {

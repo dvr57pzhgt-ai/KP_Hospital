@@ -11,7 +11,7 @@ namespace KP_Hospital.Views
         public MainWindow()
         {
             InitializeComponent();
-            LoadData(); // Загружаем данные при открытии окна
+            LoadData();
         }
 
         /// <summary>
@@ -23,20 +23,20 @@ namespace KP_Hospital.Views
             {
                 using var context = new AppDbContext();
 
-                // Получаем список пациентов
+                
                 var patients = context.Patients.ToList();
 
-                // Очищаем таблицу
+                
                 dataGridPatients.Items.Clear();
 
-                // Если пациентов нет, выводим сообщение (для отладки)
+               
                 if (patients.Count == 0)
                 {
                     MessageBox.Show("В базе данных нет ни одного пациента!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
-                // Заполняем таблицу
+               
                 foreach (var p in patients)
                 {
                     dataGridPatients.Items.Add(new
@@ -60,8 +60,8 @@ namespace KP_Hospital.Views
         /// </summary>
         private void BtnReset_Click(object sender, RoutedEventArgs e)
         {
-            txtSearch.Text = string.Empty; // Очищаем поле поиска
-            LoadData(); // Загружаем всех
+            txtSearch.Text = string.Empty; 
+            LoadData(); 
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace KP_Hospital.Views
 
             using var context = new AppDbContext();
 
-            // Ищем пациентов по ФИО
+           
             var patients = context.Patients
                 .Where(p => p.FullName.Contains(searchText))
                 .ToList();
@@ -91,7 +91,6 @@ namespace KP_Hospital.Views
                 });
             }
         }
-
         /// <summary>
         /// Кнопка "+ Добавить пациента".
         /// </summary>
@@ -99,10 +98,29 @@ namespace KP_Hospital.Views
         {
             var patientWindow = new PatientWindow();
 
-            // Если пациент добавлен, обновляем таблицу
+            
             if (patientWindow.ShowDialog() == true)
             {
                 LoadData();
+            }
+        }
+        private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            
+            if (dataGridPatients.SelectedItem != null)
+            {
+               
+                dynamic selected = dataGridPatients.SelectedItem;
+                int patientId = selected.Id;
+
+                using var context = new AppDbContext();
+                var patient = context.Patients.Find(patientId);
+
+                if (patient != null)
+                {
+                    var recordWindow = new MedicalRecordWindow(patient);
+                    recordWindow.ShowDialog();
+                }
             }
         }
     }

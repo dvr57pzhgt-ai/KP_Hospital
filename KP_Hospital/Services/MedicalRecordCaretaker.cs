@@ -3,35 +3,30 @@ using System.Collections.Generic;
 
 namespace KP_Hospital.Services
 {
-    /// <summary>
-    /// Паттерн "Снимок" (Caretaker). 
-    /// Хранит историю снимков для функции "Отменить действие".
-    /// </summary>
-    public class MedicalRecordCaretaker
-    {
-        private Stack<MedicalRecordMemento> _history = new Stack<MedicalRecordMemento>();
 
         /// <summary>
-        /// Сохраняет снимок в историю.
+        /// Паттерн "Снимок" (Caretaker). 
+        /// Хранит историю снимков для функции "Отменить действие".
         /// </summary>
-        public void Save(MedicalRecord record)
+        public class MedicalRecordCaretaker
         {
-            _history.Push(record.SaveState());
-        }
+            private Stack<MedicalRecordMemento> _history = new Stack<MedicalRecordMemento>();
 
-        /// <summary>
-        /// Восстанавливает последнее состояние.
-        /// </summary>
-        
-        public bool Undo(MedicalRecord record)
-        {
-            if (_history.Count > 0)
+            public void Save(MedicalRecord record)
             {
-                var memento = _history.Pop();
-                record.RestoreState(memento);
-                return true;
+                _history.Push(record.SaveState());
             }
-            return false;
+
+            public bool Undo(MedicalRecord record)
+            {
+                if (_history.Count > 0)
+                {
+                    var memento = _history.Pop();
+                    record.RestoreState(memento);
+                    return true;
+                }
+                return false;
+            }
         }
-    }
+    
 }

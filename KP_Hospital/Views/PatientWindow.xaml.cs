@@ -14,7 +14,6 @@ namespace KP_Hospital.Views
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Проверка на пустое ФИО
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
                 MessageBox.Show("Введите ФИО пациента!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -23,10 +22,8 @@ namespace KP_Hospital.Views
 
             try
             {
-                // 2. Подключаемся к БД
                 using var context = new AppDbContext();
 
-                // 3. Создаем пациента
                 var newPatient = new Patient
                 {
                     FullName = txtFullName.Text.Trim(),
@@ -37,13 +34,11 @@ namespace KP_Hospital.Views
                     Phone = txtPhone.Text.Trim()
                 };
 
-                // 4. Сохраняем
                 context.Patients.Add(newPatient);
                 context.SaveChanges();
 
                 MessageBox.Show("Пациент успешно добавлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                // 5. Закрываем окно и говорим главному окну, что всё ок (true)
                 this.DialogResult = true;
             }
             catch (Exception ex)
