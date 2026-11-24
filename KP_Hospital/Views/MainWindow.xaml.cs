@@ -123,5 +123,37 @@ namespace KP_Hospital.Views
                 }
             }
         }
+      
+
+           
+            /// <summary>
+            /// Обработчик нажатия на кнопку "Уведомления". 
+            /// Загружает список уведомлений для текущего врача из базы данных.
+            /// </summary>
+           
+          private void BtnNotifications_Click(object sender, RoutedEventArgs e)
+          {
+                using var context = new AppDbContext();
+
+                var notifications = context.Notifications
+                    .Where(n => n.DoctorId == 1)
+                    .OrderByDescending(n => n.CreatedAt)
+                    .ToList();
+
+                if (notifications.Count == 0)
+                {
+                    MessageBox.Show("У вас нет новых уведомлений.", "Уведомления");
+                    return;
+                }
+
+                string message = "Ваши уведомления:\n\n";
+                foreach (var n in notifications)
+                {
+                    message += $"[{n.CreatedAt:dd.MM.yyyy HH:mm}] {n.Message}\n";
+                }
+
+                MessageBox.Show(message, "Уведомления", MessageBoxButton.OK, MessageBoxImage.Information);
+          }
+        
     }
 }

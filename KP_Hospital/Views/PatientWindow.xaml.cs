@@ -13,7 +13,7 @@ namespace KP_Hospital.Views
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
+        { 
             if (string.IsNullOrWhiteSpace(txtFullName.Text))
             {
                 MessageBox.Show("Введите ФИО пациента!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);

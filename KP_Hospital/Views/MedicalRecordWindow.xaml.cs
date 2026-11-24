@@ -9,7 +9,7 @@ using KP_Hospital.Services;
 namespace KP_Hospital.Views
 {
     /// <summary>
-    /// Логика взаимодействия для окна введения истории болезни.
+    /// Логика взаимодействия для окна введения и просмотра истории болезни.
     /// Реализует паттерн Memento для функции отмены действий.
     /// </summary>
     public partial class MedicalRecordWindow : Window
@@ -22,7 +22,7 @@ namespace KP_Hospital.Views
         /// <summary>
         /// Инициализирует окно для конкретного пациента.
         /// </summary>
-       
+        
         public MedicalRecordWindow(Patient patient)
         {
             InitializeComponent();
@@ -33,16 +33,43 @@ namespace KP_Hospital.Views
             txtPatientName.Text = $"Пациент: {_currentPatient.FullName}";
 
             LoadDiagnoses();
+            LoadHistory();
         }
 
         /// <summary>
-        /// Загружает список всех диагнозов из базы данных в выпадающий список (ComboBox).
+        /// Загружает список всех диагнозов из базы данных в выпадающий список.
         /// </summary>
         private void LoadDiagnoses()
         {
             using var context = new AppDbContext();
             var diagnoses = context.Diagnoses.ToList();
             cmbDiagnosis.ItemsSource = diagnoses;
+        }
+
+        /// <summary>
+        /// Загружает историю болезней текущего пациента из БД и выводит её в таблицу.
+        /// </summary>
+        private void LoadHistory()
+        {
+            using var context = new AppDbContext();
+
+            var records = context.MedicalRecords
+                .Where(r => r.PatientId == _currentPatient.PatientId)
+                .OrderByDescending(r => r.VisitDate)
+                .ToList();
+
+            dataGridHistory.Items.Clear();
+            foreach (var r in records)
+            {
+                var diagName = context.Diagnoses.Find(r.DiagnosisId)?.Name ?? "Не указан";
+
+                dataGridHistory.Items.Add(new
+                {
+                    VisitDate = r.VisitDate.ToString("dd.MM.yyyy"),
+                    DiagnosisName = diagName,
+                    Complaints = r.Complaints
+                });
+            }
         }
 
         /// <summary>
@@ -59,38 +86,40 @@ namespace KP_Hospital.Views
         }
 
         /// <summary>
-        /// Обработчик нажатия на кнопку "Отменить". Восстанавливает предыдущее состояние (Memento).
+        /// Обработчик нажатия на кнопку "Отменить". Восстанавливает предыдущее состояние формы.
         /// </summary>
+       
         private void BtnUndo_Click(object sender, RoutedEventArgs e)
         {
-            _isRestoring = true; 
-
+            _isRestoring = true;
             if (_caretaker.Undo(_currentRecord))
             {
                 txtComplaints.Text = _currentRecord.Complaints;
                 txtObjective.Text = _currentRecord.ObjectiveStatus;
                 txtTreatment.Text = _currentRecord.TreatmentPlan;
             }
-
             _isRestoring = false;
         }
 
         /// <summary>
-        /// Обработчик нажатия на кнопку "Сохранить". Сохраняет историю болезни в базу данных.
+        /// Обработчик нажатия на кнопку "Сохранить". 
+        /// Сохраняет историю болезни, рецепт (если введен) и создает уведомление.
         /// </summary>
+        
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             if (cmbDiagnosis.SelectedItem == null)
             {
-                MessageBox.Show("Пожалуйста, выберите диагноз из списка!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Выберите диагноз!");
                 return;
             }
 
             try
             {
                 using var context = new AppDbContext();
+
                 _currentRecord.PatientId = _currentPatient.PatientId;
-                _currentRecord.DoctorId = 1; 
+                _currentRecord.DoctorId = 1;
                 _currentRecord.DiagnosisId = ((Diagnosis)cmbDiagnosis.SelectedItem).DiagnosisId;
                 _currentRecord.VisitDate = DateTime.Now;
                 _currentRecord.Complaints = txtComplaints.Text;
@@ -100,13 +129,44 @@ namespace KP_Hospital.Views
                 context.MedicalRecords.Add(_currentRecord);
                 context.SaveChanges();
 
-                MessageBox.Show("История болезни успешно сохранена!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (!string.IsNullOrWhiteSpace(txtMedication.Text))
+                {
+                    var newPrescription = new Prescription
+                    {
+                        RecordId = _currentRecord.RecordId,
+                        Medication = txtMedication.Text,
+                        Dosage = "По назначению",
+                        Duration = "7 дней"
+                    };
+                    context.Prescriptions.Add(newPrescription);
+                    context.SaveChanges();
+                }
 
-                this.DialogResult = true;
+                var notification = new Notification
+                {
+                    DoctorId = 1,
+                    Message = $"Создана история болезни для пациента {_currentPatient.FullName}",
+                    Type = "Медицинское",
+                    CreatedAt = DateTime.Now,
+                    IsRead = false
+                };
+                context.Notifications.Add(notification);
+                context.SaveChanges();
+
+                MessageBox.Show("История болезни и рецепт сохранены!", "Успех");
+
+                txtComplaints.Text = "";
+                txtObjective.Text = "";
+                txtTreatment.Text = "";
+                txtMedication.Text = "";
+                cmbDiagnosis.SelectedItem = null;
+                _currentRecord.RecordId = 0;
+
+                LoadHistory();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка: {ex.Message}\n\n{ex.InnerException?.Message}");
             }
         }
     }

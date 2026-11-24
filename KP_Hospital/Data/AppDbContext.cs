@@ -20,7 +20,7 @@ namespace KP_Hospital.Data
         /// </summary>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\NameServer;Database=MedicalDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\NameServer;Database=MedicalDB_v2;Trusted_Connection=True;TrustServerCertificate=True;");
         }
         /// <summary>
         /// Настройка моделей, явное указание ключей.
@@ -29,6 +29,9 @@ namespace KP_Hospital.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            
+            modelBuilder.Entity<MedicalRecord>().ToTable("MedicalRecord");
 
             modelBuilder.Entity<MedicalRecord>().HasKey(r => r.RecordId);
         }

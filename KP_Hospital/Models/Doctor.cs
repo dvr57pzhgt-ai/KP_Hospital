@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
 namespace KP_Hospital.Models
-{      /// <summary>
+{     
+    /// <summary>
          /// Сущность "Врач". Содержит данные о медицинском сотруднике для авторизации и работы.
          /// </summary>
 
