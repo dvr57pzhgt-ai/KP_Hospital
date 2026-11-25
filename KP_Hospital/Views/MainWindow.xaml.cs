@@ -8,9 +8,12 @@ namespace KP_Hospital.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private Doctor _currentDoctor; 
+
+        public MainWindow(Doctor doctor)
         {
             InitializeComponent();
+            _currentDoctor = doctor; 
             LoadData();
         }
 
@@ -106,10 +109,8 @@ namespace KP_Hospital.Views
         }
         private void DataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            
             if (dataGridPatients.SelectedItem != null)
             {
-               
                 dynamic selected = dataGridPatients.SelectedItem;
                 int patientId = selected.Id;
 
@@ -118,21 +119,19 @@ namespace KP_Hospital.Views
 
                 if (patient != null)
                 {
-                    var recordWindow = new MedicalRecordWindow(patient);
+                    var recordWindow = new MedicalRecordWindow(patient, _currentDoctor);
                     recordWindow.ShowDialog();
                 }
             }
         }
-      
-
            
             /// <summary>
             /// Обработчик нажатия на кнопку "Уведомления". 
             /// Загружает список уведомлений для текущего врача из базы данных.
             /// </summary>
            
-          private void BtnNotifications_Click(object sender, RoutedEventArgs e)
-          {
+         private void BtnNotifications_Click(object sender, RoutedEventArgs e)
+         {
                 using var context = new AppDbContext();
 
                 var notifications = context.Notifications
@@ -153,7 +152,28 @@ namespace KP_Hospital.Views
                 }
 
                 MessageBox.Show(message, "Уведомления", MessageBoxButton.OK, MessageBoxImage.Information);
-          }
-        
+         }
+        /// <summary>
+        /// Обработчик пункта меню "Выход".
+        /// </summary>
+        private void MenuExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        /// <summary>
+        /// Обработчик пункта меню "О программе".
+        /// </summary>
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(
+                "Курсовой проект\n" +
+                "Тема: Разработка информационной системы для ведения историй болезней\n" +
+                "Выполнил: Табачинская Милана Владимировна\n" +
+                "Группа: 3пк2\n" +
+                "Технологии: C#, WPF, MS SQL Server, Entity Framework Core, MVVM, NUnit",
+                "О программе", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
     }
 }

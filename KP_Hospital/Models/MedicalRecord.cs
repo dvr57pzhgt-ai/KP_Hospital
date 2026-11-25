@@ -7,7 +7,7 @@ namespace KP_Hospital.Models
     {
         public int RecordId { get; set; }
 
-        public DateTime VisitDate { get; set; } = DateTime.Now;
+        public DateTime VisitDate { get; set; }
 
         public string Complaints { get; set; } = string.Empty;
 
@@ -25,6 +25,8 @@ namespace KP_Hospital.Models
         public Diagnosis? DiagnosisInfo { get; set; }
 
         public List<Prescription> Prescriptions { get; set; } = new();
+
+        public bool IsSickLeave { get; set; }
 
 
         /// <summary>

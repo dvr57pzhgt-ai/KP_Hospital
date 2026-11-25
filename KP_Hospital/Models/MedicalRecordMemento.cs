@@ -1,9 +1,5 @@
 ﻿namespace KP_Hospital.Models
 {
-    /// <summary>
-    /// Паттерн "Снимок" (Memento). 
-    /// Хранит состояние истории болезни для возможности отмены.
-    /// </summary>
     public class MedicalRecordMemento
     {
         public string Complaints { get; }
@@ -16,6 +12,5 @@
             ObjectiveStatus = objectiveStatus;
             TreatmentPlan = treatmentPlan;
         }
-
     }
 }

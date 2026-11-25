@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KP_Hospital.Views"
         mc:Ignorable="d"
-     Title="История болезни" Height="800" Width="850" 
+    Title="История болезни" Height="750" Width="950" 
         WindowStartupLocation="CenterOwner" Background="#F0F4F8">
 
     <Grid Margin="20">
@@ -15,37 +15,48 @@
         </Grid.RowDefinitions>
 
         <TextBlock x:Name="txtPatientName" Grid.Row="0" Text="Пациент: " FontSize="20" FontWeight="Bold" 
-                   Foreground="#1976D2" Margin="0,0,0,15"/>
+                   Foreground="#1976D2" Margin="0,0,0,15" TextWrapping="Wrap"/>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.2*"/>
-              
+                <ColumnDefinition Width="1.4*"/>
                 <ColumnDefinition Width="1*"/>
-               
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="10" Margin="0,0,10,0">
                 <Border.Effect>
                     <DropShadowEffect Color="#B0BEC5" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
                 </Border.Effect>
-                <DataGrid x:Name="dataGridHistory" AutoGenerateColumns="False" IsReadOnly="True" 
-                          CanUserAddRows="False" Background="White" RowBackground="White" 
-                          AlternatingRowBackground="#E3F2FD" BorderBrush="#B0BEC5" BorderThickness="1"
-                          RowHeight="30" ColumnHeaderHeight="35">
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="#E3F2FD"/>
-                            <Setter Property="Foreground" Value="#0D47A1"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Дата" Binding="{Binding VisitDate}" Width="90"/>
-                        <DataGridTextColumn Header="Диагноз" Binding="{Binding DiagnosisName}" Width="130"/>
-                        <DataGridTextColumn Header="Жалобы" Binding="{Binding Complaints}" Width="*"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Content="Показать всю историю" Grid.Row="0" Click="BtnShowAllHistory_Click" 
+                            Height="30" Margin="0,0,0,10" Background="#FF9800" Foreground="White" 
+                            BorderThickness="0" HorizontalAlignment="Left" Width="180" FontWeight="SemiBold"/>
+
+                    <DataGrid x:Name="dataGridHistory" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" 
+                              CanUserAddRows="False" Background="White" RowBackground="White" 
+                              AlternatingRowBackground="#E3F2FD" BorderBrush="#B0BEC5" BorderThickness="1"
+                              RowHeight="30" ColumnHeaderHeight="35">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#E3F2FD"/>
+                                <Setter Property="Foreground" Value="#0D47A1"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="5,0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Дата" Binding="{Binding VisitDate}" Width="80"/>
+                            <DataGridTextColumn Header="Врач" Binding="{Binding DoctorName}" Width="140"/>
+                            <DataGridTextColumn Header="Диагноз" Binding="{Binding DiagnosisName}" Width="110"/>
+                            <DataGridTextColumn Header="Жалобы" Binding="{Binding Complaints}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Border>
 
             <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="15">
@@ -59,15 +70,15 @@
                     <ComboBox x:Name="cmbDiagnosis" Height="30" Margin="0,0,0,10" DisplayMemberPath="Name" />
 
                     <TextBlock Text="Жалобы:" Foreground="#546E7A" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtComplaints" Height="50" TextWrapping="Wrap" AcceptsReturn="True" 
+                    <TextBox x:Name="txtComplaints" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
                              Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,10" TextChanged="Input_TextChanged"/>
 
                     <TextBlock Text="Осмотр:" Foreground="#546E7A" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtObjective" Height="50" TextWrapping="Wrap" AcceptsReturn="True" 
+                    <TextBox x:Name="txtObjective" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
                              Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,10" TextChanged="Input_TextChanged"/>
 
                     <TextBlock Text="Лечение:" Foreground="#546E7A" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtTreatment" Height="50" TextWrapping="Wrap" AcceptsReturn="True" 
+                    <TextBox x:Name="txtTreatment" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
                              Padding="5" BorderBrush="#90CAF9" Margin="0,0,0,10" TextChanged="Input_TextChanged"/>
 
                     <TextBlock Text="Назначение (Лекарство):" Foreground="#546E7A" Margin="0,0,0,5"/>

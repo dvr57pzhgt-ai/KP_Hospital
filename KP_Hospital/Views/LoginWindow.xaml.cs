@@ -1,30 +1,32 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using KP_Hospital.Data;
 using KP_Hospital.Models;
-using KP_Hospital.Services;
 
 namespace KP_Hospital.Views
 {
+    /// <summary>
+    /// Логика взаимодействия для окна авторизации.
+    /// </summary>
     public partial class LoginWindow : Window
     {
         public LoginWindow()
         {
             InitializeComponent();
-            DataContext = new ViewModels.LoginViewModel();
             CreateTestUserIfNotExists();
         }
 
+        /// <summary>
+        /// Создает тестового врача при первом запуске программы.
+        /// </summary>
         private void CreateTestUserIfNotExists()
         {
             try
             {
                 using var context = new AppDbContext();
-
-                // Создаем базу данных (если её нет)
                 context.Database.EnsureCreated();
 
-                // Если в базе нет врачей — добавляем тестового
                 if (!context.Doctors.Any())
                 {
                     context.Doctors.Add(new Doctor
@@ -41,29 +43,37 @@ namespace KP_Hospital.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка инициализации базы: {ex.Message}\n\n{ex.InnerException?.Message}", "Ошибка БД", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка инициализации БД: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        
 
+        /// <summary>
+        /// Обработчик кнопки "Войти".
+        /// </summary>
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            using var context = new AppDbContext();
-            IAuthService authService = new AuthService(context);
-
-            var vm = DataContext as ViewModels.LoginViewModel;
-            string username = vm?.Username ?? "";
-            string password = txtPassword.Password;
-
-            if (authService.Login(username, password))
+            try
             {
-                var main = new MainWindow();
-                main.Show();
-                this.Close();
+                using var context = new AppDbContext();
+
+                // Ищем врача по логину и паролю
+                var doctor = context.Doctors.FirstOrDefault(d => d.Login == txtLogin.Text && d.PasswordHash == txtPassword.Password);
+
+                if (doctor != null)
+                {
+                    // Передаем вошедшего врача в главное окно
+                    var main = new MainWindow(doctor);
+                    main.Show();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка БД: {ex.Message}\n\n{ex.InnerException?.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
