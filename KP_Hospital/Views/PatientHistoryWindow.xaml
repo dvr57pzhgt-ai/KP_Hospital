@@ -1,0 +1,43 @@
+﻿<Window x:Class="KP_Hospital.Views.PatientHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KP_Hospital.Views"
+        mc:Ignorable="d"
+         Title="Моя история болезней" Height="500" Width="800" 
+        WindowStartupLocation="CenterScreen" Background="#F0F8FF">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" Padding="15" CornerRadius="8" Margin="0,0,0,15">
+            <TextBlock x:Name="txtGreeting" Text="Здравствуйте!" FontSize="20" FontWeight="Bold" Foreground="#1E3A5F"/>
+        </Border>
+
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="10">
+            <DataGrid x:Name="dataGridMyHistory" AutoGenerateColumns="False" IsReadOnly="True" 
+                      CanUserAddRows="False" Background="Transparent" RowBackground="White" 
+                      AlternatingRowBackground="#F4F9FD" BorderThickness="0"
+                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E0E0E0"
+                      RowHeight="35" ColumnHeaderHeight="40">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#E6F2F8"/>
+                        <Setter Property="Foreground" Value="#34515E"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="10,0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Дата" Binding="{Binding VisitDate}" Width="100"/>
+                    <DataGridTextColumn Header="Врач" Binding="{Binding DoctorName}" Width="180"/>
+                    <DataGridTextColumn Header="Диагноз" Binding="{Binding DiagnosisName}" Width="150"/>
+                    <DataGridTextColumn Header="Лечение" Binding="{Binding TreatmentPlan}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</Window>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using KP_Hospital.Data;
 using KP_Hospital.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace KP_Hospital.Views
 {
@@ -25,7 +26,7 @@ namespace KP_Hospital.Views
             try
             {
                 using var context = new AppDbContext();
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
 
                 if (!context.Doctors.Any())
                 {
@@ -55,20 +56,42 @@ namespace KP_Hospital.Views
             try
             {
                 using var context = new AppDbContext();
+                string loginInput = txtLogin.Text;
+                string passwordInput = txtPassword.Password;
 
-                // Ищем врача по логину и паролю
-                var doctor = context.Doctors.FirstOrDefault(d => d.Login == txtLogin.Text && d.PasswordHash == txtPassword.Password);
-
-                if (doctor != null)
+                // Если выбран "Врач"
+                if (rbDoctor.IsChecked == true)
                 {
-                    // Передаем вошедшего врача в главное окно
-                    var main = new MainWindow(doctor);
-                    main.Show();
-                    this.Close();
+                    var doctor = context.Doctors.FirstOrDefault(d => d.Login == loginInput && d.PasswordHash == passwordInput);
+
+                    if (doctor != null)
+                    {
+                        var main = new MainWindow(doctor);
+                        main.Show();
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Неверный логин или пароль врача!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
-                else
+                // Если выбран "Пациент"
+                else if (rbPatient.IsChecked == true)
                 {
-                    MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    // Ищем пациента по номеру полиса (InsuranceNumber)
+                    var patient = context.Patients.FirstOrDefault(p => p.InsuranceNumber == loginInput);
+
+                    if (patient != null)
+                    {
+                        // Пароль для пациента не нужен (или можно проверять дату рождения)
+                        var historyWindow = new PatientHistoryWindow(patient);
+                        historyWindow.Show();
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Пациент с таким номером полиса не найден!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)

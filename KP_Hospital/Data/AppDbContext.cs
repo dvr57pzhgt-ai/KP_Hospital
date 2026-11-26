@@ -30,8 +30,12 @@ namespace KP_Hospital.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            
+            modelBuilder.Entity<Doctor>().ToTable("Doctor");
+            modelBuilder.Entity<Patient>().ToTable("Patient");
             modelBuilder.Entity<MedicalRecord>().ToTable("MedicalRecord");
+            modelBuilder.Entity<Diagnosis>().ToTable("Diagnosis");
+            modelBuilder.Entity<Prescription>().ToTable("Prescription");
+            modelBuilder.Entity<Notification>().ToTable("Notification");
 
             modelBuilder.Entity<MedicalRecord>().HasKey(r => r.RecordId);
         }
