@@ -51,6 +51,9 @@ namespace KP_Hospital.Views
         /// <summary>
         /// Обработчик кнопки "Войти".
         /// </summary>
+        /// <summary>
+        /// Обработчик кнопки "Войти". Проверяет логин и пароль врача.
+        /// </summary>
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -59,39 +62,17 @@ namespace KP_Hospital.Views
                 string loginInput = txtLogin.Text;
                 string passwordInput = txtPassword.Password;
 
-                // Если выбран "Врач"
-                if (rbDoctor.IsChecked == true)
-                {
-                    var doctor = context.Doctors.FirstOrDefault(d => d.Login == loginInput && d.PasswordHash == passwordInput);
+                var doctor = context.Doctors.FirstOrDefault(d => d.Login == loginInput && d.PasswordHash == passwordInput);
 
-                    if (doctor != null)
-                    {
-                        var main = new MainWindow(doctor);
-                        main.Show();
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Неверный логин или пароль врача!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                if (doctor != null)
+                {
+                    var main = new MainWindow(doctor);
+                    main.Show();
+                    this.Close();
                 }
-                // Если выбран "Пациент"
-                else if (rbPatient.IsChecked == true)
+                else
                 {
-                    // Ищем пациента по номеру полиса (InsuranceNumber)
-                    var patient = context.Patients.FirstOrDefault(p => p.InsuranceNumber == loginInput);
-
-                    if (patient != null)
-                    {
-                        // Пароль для пациента не нужен (или можно проверять дату рождения)
-                        var historyWindow = new PatientHistoryWindow(patient);
-                        historyWindow.Show();
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Пациент с таким номером полиса не найден!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    MessageBox.Show("Неверный логин или пароль!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

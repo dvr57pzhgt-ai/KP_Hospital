@@ -9,22 +9,19 @@ namespace KP_Hospital.Tests
         [Test]
         public void SaveAndRestoreState_ShouldRestorePreviousValues()
         {
-            // 1. Arrange (Подготовка)
             var record = new MedicalRecord
             {
                 Complaints = "Исходные жалобы",
                 TreatmentPlan = "Лечение 1"
             };
 
-            // 2. Act (Действие)
-            var memento = record.SaveState(); // Делаем снимок
+            var memento = record.SaveState();
 
-            record.Complaints = "Новые жалобы"; // Меняем данные
+            record.Complaints = "Новые жалобы"; 
             record.TreatmentPlan = "Лечение 2";
 
-            record.RestoreState(memento); // Восстанавливаем
+            record.RestoreState(memento);
 
-            // 3. Assert (Проверка)
             Assert.That(record.Complaints, Is.EqualTo("Исходные жалобы"));
             Assert.That(record.TreatmentPlan, Is.EqualTo("Лечение 1"));
         }

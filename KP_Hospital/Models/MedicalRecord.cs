@@ -28,6 +28,9 @@ namespace KP_Hospital.Models
 
         public bool IsSickLeave { get; set; }
 
+        public DateTime? SickLeaveEndDate { get; set; }
+        public int SickLeaveExtensionDays { get; set; } = 0;
+
 
         /// <summary>
         /// Создает снимок текущего состояния истории болезни.

@@ -3,21 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Медицинская система" Height="650" Width="1000" 
         WindowStartupLocation="CenterScreen" Background="#F0F8FF">
-    <!-- Очень светлый фон (AliceBlue) -->
+   
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Меню -->
+           
             <RowDefinition Height="60"/>
-            <!-- Шапка -->
+           
             <RowDefinition Height="Auto"/>
-            <!-- Поиск -->
+           
             <RowDefinition Height="*"/>
-            <!-- Таблица -->
+           
         </Grid.RowDefinitions>
 
-        <!-- 0. Меню -->
         <Menu Grid.Row="0" Background="#E6F2F8">
             <MenuItem Header="Файл" Foreground="#34515E">
                 <MenuItem Header="Выход" Click="MenuExit_Click" />
@@ -27,41 +26,43 @@
             </MenuItem>
         </Menu>
 
-        <!-- 1. Шапка (Пастельно-синяя) -->
         <Border Grid.Row="1" Background="#A2D2FF">
             <TextBlock Text="Медицинская информационная система" 
                        Foreground="#1E3A5F" FontSize="22" FontWeight="SemiBold" 
                        VerticalAlignment="Center" Margin="20,0"/>
         </Border>
 
-        <!-- 2. Панель управления -->
         <Border Grid.Row="2" Background="White" Margin="20,15,20,10" Padding="15" CornerRadius="8">
             <Border.Effect>
                 <DropShadowEffect Color="#B0BEC5" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
             </Border.Effect>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="Поиск по ФИО:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#546E7A" FontSize="14"/>
+                <TextBlock Text="Поиск (ФИО / Полис):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#546E7A" FontSize="14"/>
 
                 <TextBox x:Name="txtSearch" Width="220" Height="32" Padding="5" BorderBrush="#CFD8DC" 
-                         Margin="0,0,15,0" VerticalContentAlignment="Center" FontSize="14"/>
+             Margin="0,0,15,0" VerticalContentAlignment="Center" FontSize="14"/>
 
-                <!-- Кнопки (все в голубых тонах) -->
                 <Button Content="Найти" Click="BtnSearch_Click" Width="90" Height="32" Margin="0,0,10,0" 
-                        Background="#BBDEFB" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+            Background="#BBDEFB" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
 
                 <Button Content="Сбросить" Click="BtnReset_Click" Width="100" Height="32" Margin="0,0,20,0" 
-                        Background="#E3F2FD" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+            Background="#E3F2FD" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
 
                 <Button Content="+ Добавить пациента" Click="BtnAddPatient_Click" Width="170" Height="32" 
-                        Background="#A2D2FF" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+            Background="#A2D2FF" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+
+                <Button Content="Удалить пациента" Click="BtnDeletePatient_Click" Width="150" Height="32" Margin="10,0,0,0" 
+            Background="#FFCDD2" Foreground="#B71C1C" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
 
                 <Button Content="Уведомления" Click="BtnNotifications_Click" Width="130" Height="32" Margin="10,0,0,0" 
-                        Background="#90CAF9" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+            Background="#90CAF9" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+
+                <Button Content="Отчет по пациентам" Click="BtnGenerateReport_Click" Width="160" Height="32" Margin="10,0,0,0" 
+            Background="#BBDEFB" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
             </StackPanel>
         </Border>
 
-        <!-- 3. Таблица -->
         <Border Grid.Row="3" Background="White" Margin="20,0,20,20" CornerRadius="8">
             <Border.Effect>
                 <DropShadowEffect Color="#B0BEC5" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>

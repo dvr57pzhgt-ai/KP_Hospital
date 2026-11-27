@@ -14,7 +14,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Заголовок с ФИО и врачом -->
         <TextBlock x:Name="txtPatientName" Grid.Row="0" Text="Пациент: " FontSize="20" FontWeight="Bold" 
                    Foreground="#1E3A5F" Margin="0,0,0,15" TextWrapping="Wrap"/>
 
@@ -24,7 +23,6 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ЛЕВАЯ ЧАСТЬ: ТАБЛИЦА -->
             <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,10,0">
                 <Border.Effect>
                     <DropShadowEffect Color="#B0BEC5" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
@@ -43,7 +41,19 @@
                               CanUserAddRows="False" Background="Transparent" RowBackground="White" 
                               AlternatingRowBackground="#F4F9FD" BorderThickness="0"
                               GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E0E0E0"
-                              RowHeight="35" ColumnHeaderHeight="40">
+                              RowHeight="35" ColumnHeaderHeight="40" MouseDoubleClick="DataGridHistory_MouseDoubleClick">
+                       
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsExpired}" Value="True">
+                                        <Setter Property="Background" Value="#FFCDD2"/>
+                                        <Setter Property="Foreground" Value="#B71C1C"/>
+                                        <Setter Property="ToolTip" Value="Рецепт просрочен (выписан более 30 дней назад)"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="#E6F2F8"/>
@@ -75,12 +85,13 @@
                             <DataGridTextColumn Header="Врач" Binding="{Binding DoctorName}" Width="140"/>
                             <DataGridTextColumn Header="Диагноз" Binding="{Binding DiagnosisName}" Width="110"/>
                             <DataGridTextColumn Header="Жалобы" Binding="{Binding Complaints}" Width="*"/>
+
+                            <DataGridTextColumn Header="Больничный" Binding="{Binding SickLeaveStatus}" Width="150"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
             </Border>
 
-            <!-- ПРАВАЯ ЧАСТЬ: ФОРМА -->
             <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20">
                 <Border.Effect>
                     <DropShadowEffect Color="#B0BEC5" BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
@@ -89,8 +100,10 @@
                     <TextBlock Text="Новый прием" FontSize="20" FontWeight="Bold" Foreground="#1E3A5F" Margin="0,0,0,15"/>
 
                     <TextBlock Text="Диагноз:" Foreground="#546E7A" Margin="0,0,0,5"/>
-                    <ComboBox x:Name="cmbDiagnosis" Height="32" Margin="0,0,0,15" DisplayMemberPath="Name" 
-                              BorderBrush="#CFD8DC" Padding="5"/>
+                    <ComboBox x:Name="cmbDiagnosis" Height="32" Margin="0,0,0,15" 
+                              IsEditable="True" IsTextSearchEnabled="True" 
+                              DisplayMemberPath="Name" TextSearch.TextPath="Name"
+                              BorderBrush="#CFD8DC" Padding="5"/>       
 
                     <TextBlock Text="Жалобы:" Foreground="#546E7A" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtComplaints" Height="60" TextWrapping="Wrap" AcceptsReturn="True" 
@@ -106,8 +119,13 @@
 
                     <TextBlock Text="Назначение (Лекарство):" Foreground="#546E7A" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtMedication" Height="32" Padding="5" BorderBrush="#CFD8DC" Margin="0,0,0,20" FontSize="14"/>
-
+                    <CheckBox x:Name="chkSickLeave" Content="Выдать больничный лист (7 дней)" 
+          Foreground="#546E7A" Margin="0,0,0,15"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                       
+                        <Button Content="Закрыть" Click="BtnClose_Click" Width="90" Height="35" Margin="0,0,10,0" 
+                                Background="#E0E0E0" Foreground="#333333" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
+
                         <Button Content="Отменить" Click="BtnUndo_Click" Width="100" Height="35" Margin="0,0,10,0" 
                                 Background="#E3F2FD" Foreground="#1E3A5F" BorderThickness="0" FontWeight="SemiBold" Cursor="Hand"/>
                         <Button Content="Сохранить" Click="BtnSave_Click" Width="110" Height="35" 

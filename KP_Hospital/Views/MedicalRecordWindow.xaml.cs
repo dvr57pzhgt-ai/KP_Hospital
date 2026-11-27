@@ -54,6 +54,7 @@ namespace KP_Hospital.Views
         /// Фильтрует записи по текущему врачу, если не нажата кнопка "Показать всю историю".
         /// </summary>
 
+       
         private void LoadHistory()
         {
             using var context = new AppDbContext();
@@ -70,12 +71,42 @@ namespace KP_Hospital.Views
                 var diagName = context.Diagnoses.Find(r.DiagnosisId)?.Name ?? "Не указан";
                 var docName = context.Doctors.Find(r.DoctorId)?.FullName ?? "Неизвестно";
 
+                var prescription = context.Prescriptions.FirstOrDefault(p => p.RecordId == r.RecordId);
+                bool isExpired = false;
+                if (prescription != null && (DateTime.Now - r.VisitDate).Days > 30)
+                {
+                    isExpired = true;
+                }
+
+                string sickLeaveStatus = "Нет";
+                if (r.IsSickLeave)
+                {
+                    if (r.SickLeaveEndDate != null)
+                    {
+                        sickLeaveStatus = "Снят с больничного";
+                    }
+                    else
+                    {
+                        int totalDays = 7 + r.SickLeaveExtensionDays;
+                        int daysPassed = (DateTime.Now - r.VisitDate).Days;
+                        int remainingDays = totalDays - daysPassed;
+
+                        if (remainingDays > 0)
+                            sickLeaveStatus = $"Осталось {remainingDays} дн.";
+                        else
+                            sickLeaveStatus = "Закончился срок больничного";
+                    }
+                }
+
                 dataGridHistory.Items.Add(new
                 {
+                    RecordId = r.RecordId, 
                     VisitDate = r.VisitDate.ToString("dd.MM.yyyy"),
                     DoctorName = docName,
                     DiagnosisName = diagName,
-                    Complaints = r.Complaints
+                    Complaints = r.Complaints,
+                    SickLeaveStatus = sickLeaveStatus, 
+                    IsExpired = isExpired
                 });
             }
         }
@@ -123,9 +154,9 @@ namespace KP_Hospital.Views
         /// </summary>
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (cmbDiagnosis.SelectedItem == null)
+            if (cmbDiagnosis.SelectedItem == null && string.IsNullOrWhiteSpace(cmbDiagnosis.Text))
             {
-                MessageBox.Show("Выберите диагноз!");
+                MessageBox.Show("Выберите диагноз из списка или напишите свой!");
                 return;
             }
 
@@ -133,13 +164,45 @@ namespace KP_Hospital.Views
             {
                 using var context = new AppDbContext();
 
+                int? finalDiagnosisId = null;
+
+                if (cmbDiagnosis.SelectedItem is Diagnosis selectedDiagnosis)
+                {
+                    finalDiagnosisId = selectedDiagnosis.DiagnosisId;
+                }
+                else if (!string.IsNullOrWhiteSpace(cmbDiagnosis.Text))
+                {
+                    string manualText = cmbDiagnosis.Text.Trim();
+
+                    var existingDiag = context.Diagnoses.FirstOrDefault(d => d.Name == manualText);
+
+                    if (existingDiag != null)
+                    {
+                        finalDiagnosisId = existingDiag.DiagnosisId;
+                    }
+                    else
+                    {
+                        var newDiag = new Diagnosis
+                        {
+                            Code = "MANUAL", 
+                            Name = manualText,
+                            Description = "Введено врачом вручную"
+                        };
+                        context.Diagnoses.Add(newDiag);
+                        context.SaveChanges(); 
+
+                        finalDiagnosisId = newDiag.DiagnosisId;
+                    }
+                }
+
                 _currentRecord.PatientId = _currentPatient.PatientId;
                 _currentRecord.DoctorId = _currentDoctor.DoctorId;
-                _currentRecord.DiagnosisId = ((Diagnosis)cmbDiagnosis.SelectedItem).DiagnosisId;
+                _currentRecord.DiagnosisId = finalDiagnosisId; 
                 _currentRecord.VisitDate = DateTime.Now;
                 _currentRecord.Complaints = txtComplaints.Text ?? "";
                 _currentRecord.ObjectiveStatus = txtObjective.Text ?? "";
                 _currentRecord.TreatmentPlan = txtTreatment.Text ?? "";
+                _currentRecord.IsSickLeave = chkSickLeave.IsChecked ?? false;
 
                 context.MedicalRecords.Add(_currentRecord);
                 context.SaveChanges();
@@ -155,7 +218,20 @@ namespace KP_Hospital.Views
                     };
                     context.Prescriptions.Add(newPrescription);
                     context.SaveChanges();
+
+                    ExportPrescriptionToFile(_currentPatient.FullName, cmbDiagnosis.Text, txtMedication.Text);
                 }
+
+                var notification = new Notification
+                {
+                    DoctorId = _currentDoctor.DoctorId,
+                    Message = $"Создана история болезни для пациента {_currentPatient.FullName}",
+                    Type = "Медицинское",
+                    CreatedAt = DateTime.Now,
+                    IsRead = false
+                };
+                context.Notifications.Add(notification);
+                context.SaveChanges();
 
                 MessageBox.Show("История болезни сохранена!", "Успех");
 
@@ -163,7 +239,9 @@ namespace KP_Hospital.Views
                 txtObjective.Text = "";
                 txtTreatment.Text = "";
                 txtMedication.Text = "";
+                chkSickLeave.IsChecked = false;
                 cmbDiagnosis.SelectedItem = null;
+                cmbDiagnosis.Text = "";
                 _currentRecord.RecordId = 0;
 
                 LoadHistory();
@@ -171,6 +249,66 @@ namespace KP_Hospital.Views
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}\n\n{ex.InnerException?.Message}");
+            }
+        }
+        /// <summary>
+        /// Открывает диалог сохранения файла и записывает в него рецепт.
+        /// </summary>
+
+        private void ExportPrescriptionToFile(string patientName, string diagnosis, string medication)
+        {
+            try
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+
+                saveFileDialog.Title = "Сохранить рецепт";
+                saveFileDialog.Filter = "Текстовые файлы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+                saveFileDialog.FileName = $"Рецепт_{patientName.Replace(" ", "_")}_{DateTime.Now:yyyyMMdd_HHmm}.txt";
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string fullPath = saveFileDialog.FileName;
+
+                    string content = $"Рецепт врача\n" + $"Дата выдачи: {DateTime.Now:dd.MM.yyyy HH:mm}\n" + $"Врач: {_currentDoctor.FullName}\n" + $"Пациент: {patientName}\n" +
+     $"Диагноз: {diagnosis}\n" + $"Назначение:\n" + $"{medication}\n" + $"Режим приема: По назначению врача\n" + $"Курс: 7 дней\n";
+
+                    System.IO.File.WriteAllText(fullPath, content);
+
+                    MessageBox.Show("Рецепт успешно сохранен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не удалось сохранить рецепт: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        /// <summary>
+        /// Обработчик кнопки "Закрыть". Закрывает окно истории болезни.
+        /// </summary>
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        /// <summary>
+        /// Обработчик двойного клика по истории болезней. Открывает окно управления больничным.
+        /// </summary>
+        private void DataGridHistory_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            dynamic selected = dataGridHistory.SelectedItem;
+            if (selected != null && selected.RecordId != null)
+            {
+                using var context = new AppDbContext();
+                var record = context.MedicalRecords.Find((int)selected.RecordId);
+
+                if (record != null && record.IsSickLeave) 
+                {
+                    var manageWindow = new ManageSickLeaveWindow(record);
+                    if (manageWindow.ShowDialog() == true)
+                    {
+                        LoadHistory(); 
+                    }
+                }
             }
         }
 

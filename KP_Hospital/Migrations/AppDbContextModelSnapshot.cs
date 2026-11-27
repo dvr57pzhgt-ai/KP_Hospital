@@ -112,6 +112,12 @@ namespace KP_Hospital.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("SickLeaveEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SickLeaveExtensionDays")
+                        .HasColumnType("int");
+
                     b.Property<string>("TreatmentPlan")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
